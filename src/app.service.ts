@@ -47,7 +47,7 @@ export class AppService {
       .single();
 
     if (clientError) {
-      console.log('Error fetching client data:', clientError);
+      console.log('Error fetching client data 1:', clientError);
       return 'Error fetching client data';
     }
 
@@ -73,7 +73,7 @@ export class AppService {
       .single();
 
     if (userError) {
-      console.log('Error fetching client data:', userError);
+      console.log('Error fetching client data 2:', userError);
       return 'Error fetching client data';
     }
 
@@ -241,11 +241,11 @@ export class AppService {
     }
 
     const hotelOwners = result.requests
-      .map(request => request.hotel.email)
+      .map((request) => request.hotel.email)
       .filter((value, index, self) => self.indexOf(value) === index);
 
     for (const email of hotelOwners) {
-      const request = result.requests.find(req => req.hotel.email === email);
+      const request = result.requests.find((req) => req.hotel.email === email);
       console.log(result.client);
       this.mailerService
         .sendMail({
@@ -264,10 +264,10 @@ export class AppService {
             },
           },
         })
-        .then(success => {
+        .then((success) => {
           console.log(`Email sent successfully to ${email}`);
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(`Failed to send email to ${email}: ${err}`);
         });
     }
@@ -282,10 +282,10 @@ export class AppService {
           request: result.requests[0], // Assuming you want to send the first request
         },
       })
-      .then(success => {
+      .then((success) => {
         console.log(success);
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
   }
