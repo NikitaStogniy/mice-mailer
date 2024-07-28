@@ -1,0 +1,65 @@
+{
+  "request": {
+    "id": "12345",
+    "hotel": {
+      "name": "Гостиница Лучшая",
+      "email": "contact@hotelbest.ru",
+      "phone": "+7 (495) 123-45-67"
+    },
+    "date": "2024-08-15",
+    "duration": 3,
+    "count": 50,
+    "rooms": [
+      {
+        "type": "Стандартный",
+        "quantity": 20,
+        "nights": 3,
+        "cost": 3000
+      },
+      {
+        "type": "Люкс",
+        "quantity": 5,
+        "nights": 3,
+        "cost": 7000
+      },
+      {
+        "type": "Эконом",
+        "quantity": 5,
+        "nights": 3,
+        "cost": 7000
+      }
+    ],
+    "roomsTotalCost": 115000,
+    "halls": [
+      {
+        "name": "Конференц-зал А",
+        "seating": "Театр",
+        "days": 3,
+        "cost": 50000
+      },
+      {
+        "name": "Конференц-зал Б",
+        "seating": "Класс",
+        "days": 2,
+        "cost": 30000
+      }
+    ],
+    "hallsTotalCost": 80000,
+    "food": [
+      {
+        "packageName": "Полный пансион",
+        "days": 3,
+        "persons": 50,
+        "cost": 200000
+      },
+      {
+        "packageName": "Только обед",
+        "days": 3,
+        "persons": 10,
+        "cost": 30000
+      }
+    ],
+    "foodTotalCost": 230000,
+    "totalCost": 425000
+  }
+}
