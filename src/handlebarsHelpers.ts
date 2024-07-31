@@ -1,4 +1,6 @@
 import * as Handlebars from 'handlebars';
+import { format, parseISO } from 'date-fns';
+import { ru } from 'date-fns/locale';
 
 Handlebars.registerHelper('isEven', function (index, options) {
   if (index % 2 === 0) {
@@ -30,4 +32,9 @@ Handlebars.registerHelper('pluralizeRussian', function (number, singular, few, m
   } else {
     return `${number} ${many}`;
   }
+});
+
+Handlebars.registerHelper('formatDate', (date) => {
+  const parsedDate = parseISO(date);
+  return format(parsedDate, 'd MMMM yyyy', { locale: ru });
 });

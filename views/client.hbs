@@ -38,7 +38,7 @@
               <tr>
                 <td>
                   <h1 style="font-size: 22px; font-weight: 700; margin: 56px 0 0;">
-                    Запрос №{{request.id}} в Московские ворота
+                    Запрос №{{request.id}} в {{ request.hotel.name }}
                   </h1>
                 </td>
               </tr>
@@ -49,7 +49,7 @@
               </tr>
               <tr>
                 <td style="font-size: 12px;">
-                  mail@maildomen.com         +7 (987) 654-32-10
+                  {{ request.hotel.email }}, {{ request.hotel.phone }}
                 </td>
               </tr>
               <tr>
@@ -59,7 +59,7 @@
               </tr>
               <tr>
                 <td style="font-size: 12px;">
-                  28 февраля 2024, 3 дня, 130 участников
+                  {{ formatDate request.date }}, {{pluralizeRussian request.duration 'день' 'дня' 'дней'}}, {{pluralizeRussian request.count 'участников' 'участников' 'участников'}}
                 </td>
               </tr>
             </table>
@@ -170,7 +170,7 @@
             <table style="margin: 24px 0 0; width: 100%">
               <tr style="font-size: 14px">
                 <td style="text-align: right; width: 380px;">Общий итог:</td>
-                <td style="text-align: right; font-weight: 700; padding-right: 15px">2 535 450 руб.</td>
+                <td style="text-align: right; font-weight: 700; padding-right: 15px">{{formatNumber request.totalCost}} руб.</td>
               </tr>
             </table>
           </td>

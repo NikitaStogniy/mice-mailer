@@ -31,7 +31,7 @@
                     alt="" />
 
                   <h1 style="font-size: 16px; font-weight: 700; margin: 9px 0 13px; padding-left: 20px;">
-                    Запрос №{{request.id}}. Московские ворота
+                    Запрос №{{request.id}}. {{ request.hotel.name }}
                   </h1>
 
                   <hr style="margin: 0" />
@@ -44,8 +44,7 @@
               </tr>
               <tr>
                 <td style="font-size: 12px; padding-left: 35%; text-align: right;">
-                  Международная научно-практическая конференция
-                  «Актуальные и перспективные научные исследования»
+                  {{ request.name }}
                 </td>
               </tr>
               <tr>
@@ -55,7 +54,7 @@
               </tr>
               <tr>
                 <td style="font-size: 12px; padding-left: 35%; text-align: right;">
-                  28 февраля 2024, 3 дня, 130 участников
+                  {{ formatDate request.date }}, {{pluralizeRussian request.duration 'день' 'дня' 'дней'}}, {{pluralizeRussian request.count 'участников' 'участников' 'участников'}}
                 </td>
               </tr>
               <tr>
@@ -65,14 +64,14 @@
               </tr>
               <tr>
                 <td style="font-size: 12px;">
-                  ООО "Триумф"
+                  {{ request.client.name }}
                 </td>
               </tr>
               <tr>
                 <td style="font-size: 12px; padding: 5px 0 0 45px; line-height: 20px">
-                  Декабристов ул., д. 345-6, оф. 200, Москва, 123456<br />
-                  Тел./факс (123) 456-78-90, http://www.sitename.com e-mail: info@sitename.com
-                  ОКПО 123454678, ОГРН 1234567890123, ИНН/КПП 1234567890/123456789
+                  {{ request.client.address }}<br />
+                  Тел./факс {{ request.client.phone }}, e-mail: {{ request.client.email }}<br/>
+                  ОКПО {{ request.client.okpo }}, ОГРН {{ request.client.ogrn }}, ИНН/КПП {{ request.client.inn }}/{{ request.client.kpp }}
                 </td>
               </tr>
               <tr>
@@ -197,7 +196,7 @@
             <table style="margin: 37px 0 0; width: 100%">
               <tr style="font-size: 14px">
                 <td style="text-align: right; width: 400px;">Общий итог:</td>
-                <td style="text-align: right; font-weight: 700; padding-right: 15px">2 535 450 руб.</td>
+                <td style="text-align: right; font-weight: 700; padding-right: 15px">{{ formatNumber request.totalCost }} руб.</td>
               </tr>
             </table>
 

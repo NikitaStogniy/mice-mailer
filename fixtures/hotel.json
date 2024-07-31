@@ -1,51 +1,9 @@
 {
   "request": {
-    "id": "2323",
-    "client": {
-      "name": "ООО “Триумф”",
-      "address": "Декабристов ул., д. 345-6, оф. 200, Москва, 123456",
-      "phone": "+7 (123) 456-78-90",
-      "email": "info@sitename.com",
-      "okpo": "123454678",
-      "ogrn": "1234567890123",
-      "inn": "1234567890",
-      "kpp": "123456789",
-      "contact_name": "Иван Иванович Иванов",
-      "contact_email": "mail@maildomen.com",
-      "contact_phone": "+7 (987) 654-32-10"
-    },
-    "date_from": "2024-09-01",
-    "date_to": "2024-09-03",
-    "halls": [
-      {
-        "name": "Бостон",
-        "seating": "U-shape",
-        "days": 2,
-        "cost": 100000
-      }
-    ],
-    "hallsTotalCost": 100000,
-    "food": [
-      {
-        "packageName": "Кофе-брейк Приветственный",
-        "quantity": 2,
-        "persons": 130,
-        "cost": 520000
-      },
-      {
-        "packageName": "Банкет 4800 руб. за персону",
-        "quantity": 2,
-        "persons": 20,
-        "cost": 70000
-      },
-      {
-        "packageName": "Кофе-брейк Милано",
-        "quantity": 2,
-        "persons": 130,
-        "cost": 240000
-      }
-    ],
-    "foodTotalCost": 830000,
+    "count": 25,
+    "date": "2024-07-31",
+    "duration": 3,
+    "name": "Мероприятие Сочи номер 1",
     "rooms": [
       {
         "name": "Делюкс",
@@ -66,6 +24,64 @@
         "cost": 90000
       }
     ],
-    "roomsTotalCost": 1233000
+    "roomsTotalCost": 1233000,
+    "foodTotalCost": 830000,
+    "hallsTotalCost": 100000,
+    "halls": [
+      {
+        "name": "Зал)))",
+        "cost": 3000,
+        "seating": "Театр",
+        "days": 1
+      },
+      {
+        "name": "Бостон",
+        "seating": "U-shape",
+        "days": 2,
+        "cost": 100000
+      }
+    ],
+    "food": [
+      {
+        "packageName": "Кофе-брейк Приветственный",
+        "quantity": 2,
+        "persons": 130,
+        "cost": 520000
+      },
+      {
+        "packageName": "Банкет 4800 руб. за персону",
+        "quantity": 2,
+        "persons": 20,
+        "cost": 70000
+      },
+      {
+        "packageName": "Кофе-брейк Милано",
+        "quantity": 2,
+        "persons": 130,
+        "cost": 240000
+      }
+    ],
+    "hotel": {
+      "name": "Отель на который нужно нажать",
+      "email": "vavilovvladislavvv@gmail.com",
+      "phone": ""
+    },
+    "totalCost": 2535450,
+    "id": "2323",
+    "client": {
+      "name": "ООО “Триумф”",
+      "address": "Декабристов ул., д. 345-6, оф. 200, Москва, 123456",
+      "phone": "+7 (123) 456-78-90",
+      "email": "info@sitename.com",
+      "okpo": "123454678",
+      "ogrn": "1234567890123",
+      "inn": "1234567890",
+      "kpp": "123456789",
+      "contact_name": "Иван Иванович Иванов",
+      "contact_email": "mail@maildomen.com",
+      "contact_phone": "+7 (987) 654-32-10"
+    },
+    "date_from": "2024-09-01",
+    "date_to": "2024-09-03"
   }
 }

@@ -1,11 +1,6 @@
 {
   "request": {
     "id": "12345",
-    "hotel": {
-      "name": "Гостиница Лучшая",
-      "email": "contact@hotelbest.ru",
-      "phone": "+7 (495) 123-45-67"
-    },
     "date": "2024-08-15",
     "duration": 3,
     "count": 50,
@@ -60,6 +55,11 @@
       }
     ],
     "foodTotalCost": 230000,
+    "hotel": {
+      "name": "Гостиница Лучшая",
+      "email": "contact@hotelbest.ru",
+      "phone": "+7 (495) 123-45-67"
+    },
     "totalCost": 425000
   }
 }
