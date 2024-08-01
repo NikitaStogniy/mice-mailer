@@ -71,7 +71,7 @@
                 <td style="font-size: 12px; padding: 5px 0 0 45px; line-height: 20px">
                   {{ request.client.address }}<br />
                   Тел./факс {{ request.client.phone }}, e-mail: {{ request.client.email }}<br/>
-                  ОКПО {{ request.client.okpo }}, ОГРН {{ request.client.ogrn }}, ИНН/КПП {{ request.client.inn }}/{{ request.client.kpp }}
+                  {{ displayCompanyNumbers request.client }}
                 </td>
               </tr>
               <tr>

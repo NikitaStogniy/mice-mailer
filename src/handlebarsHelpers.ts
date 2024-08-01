@@ -38,3 +38,24 @@ Handlebars.registerHelper('formatDate', (date) => {
   const parsedDate = parseISO(date);
   return format(parsedDate, 'd MMMM yyyy', { locale: ru });
 });
+
+Handlebars.registerHelper('displayCompanyNumbers', (client) => {
+  const { okpo, ogrn, inn, kpp } = client;
+  let resultParts = [];
+
+  if (okpo) {
+    resultParts.push([`ОКПО: ${okpo}`]);
+  }
+  if (ogrn) {
+    resultParts.push([`ОГРН: ${ogrn}`]);
+  }
+  if (inn && kpp) {
+    resultParts.push([`ИНН: ${inn}/КПП: ${kpp}`]);
+  } else if (inn) {
+    resultParts.push([`ИНН: ${inn}`]);
+  } else if (kpp) {
+    resultParts.push([`КПП: ${kpp}`]);
+  }
+
+  return resultParts.join(', ');
+});
