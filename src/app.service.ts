@@ -146,7 +146,7 @@ export class AppService {
         const rooms: IRoom[] = [];
         for (const roomId of requestData.rooms) {
           const { data: roomData, error: roomError } = await supabase
-            .from('room')
+            .from('requests_room_var')
             .select('*')
             .eq('id', roomId)
             .single();
@@ -157,10 +157,10 @@ export class AppService {
           }
 
           rooms.push({
-            type: roomData.name || '',
-            name: roomData.name || '',
-            quantity: roomData.count || 0,
-            nights: roomData.count || 0,
+            type: roomData.room_name || '',
+            name: roomData.room_name || '',
+            quantity: roomData.room_count || 0,
+            nights: roomData.room_count || 0,
             cost: roomData.price || 0,
           });
         }
