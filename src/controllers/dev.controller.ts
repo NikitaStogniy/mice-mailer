@@ -1,12 +1,17 @@
-import { Controller, Get, Post, Render } from '@nestjs/common';
+import { Controller, Get, Header, Post, Render, Res } from '@nestjs/common';
 import * as clientTemplateFixture from '../../fixtures/client.json';
 import * as hotelTemplateFixture from '../../fixtures/hotel.json';
 import { MailerService } from '@nestjs-modules/mailer';
+import { PdfService } from '../services/pdf.service';
+import { HandlebarsService } from '../services/handlebars.service';
+import { Response } from 'express';
 
 @Controller('dev')
 export class DevController {
   constructor(
     private readonly mailerService: MailerService,
+    private readonly pdfService: PdfService,
+    private readonly handlebarsService: HandlebarsService,
   ) {}
 
   @Post('hotel')
@@ -71,5 +76,15 @@ export class DevController {
   @Render('hotel')
   getTestHotelHtml() {
     return hotelTemplateFixture;
+  }
+
+  @Get('hotel/pdf')
+  // @Header('Content-Type', 'application/pdf')
+  // @Header('Content-Disposition', 'attachment; filename=output.pdf')
+  async getTestHotelPdf(@Res() res: Response) {
+    const htmlContent = await this.handlebarsService.renderTemplate('hotel', hotelTemplateFixture);
+    await this.pdfService.generatePdf(htmlContent);
+    return 'ok';
+    // res.send(pdfBuffer);
   }
 }

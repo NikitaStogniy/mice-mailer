@@ -9,7 +9,7 @@ import {
   IRequest,
   IResult,
   IRoom,
-} from './supabaseTypes';
+} from '../supabaseTypes';
 import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient<Database>(
