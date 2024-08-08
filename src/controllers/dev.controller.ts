@@ -1,12 +1,17 @@
-import { Controller, Get, Post, Render } from '@nestjs/common';
+import { Controller, Get, Header, Post, Render, Res, StreamableFile } from '@nestjs/common';
 import * as clientTemplateFixture from '../../fixtures/client.json';
 import * as hotelTemplateFixture from '../../fixtures/hotel.json';
 import { MailerService } from '@nestjs-modules/mailer';
+import { PdfService } from '../services/pdf.service';
+import { HandlebarsService } from '../services/handlebars.service';
+import { Response } from 'express';
 
 @Controller('dev')
 export class DevController {
   constructor(
     private readonly mailerService: MailerService,
+    private readonly pdfService: PdfService,
+    private readonly handlebarsService: HandlebarsService,
   ) {}
 
   @Post('hotel')
@@ -67,9 +72,27 @@ export class DevController {
     return clientTemplateFixture;
   }
 
+  @Get('client/pdf')
+  @Header('Content-Type', 'application/pdf')
+  @Header('Content-Disposition', 'attachment; filename=client.pdf')
+  async getTestClientPdf() {
+    const htmlContent = await this.handlebarsService.renderTemplate('client', clientTemplateFixture);
+    const pdfBytes = await this.pdfService.generatePdf(htmlContent);
+    return new StreamableFile(Buffer.from(pdfBytes));
+  }
+
   @Get('hotel/html')
   @Render('hotel')
   getTestHotelHtml() {
     return hotelTemplateFixture;
+  }
+
+  @Get('hotel/pdf')
+  @Header('Content-Type', 'application/pdf')
+  @Header('Content-Disposition', 'attachment; filename=hotel.pdf')
+  async getTestHotelPdf() {
+    const htmlContent = await this.handlebarsService.renderTemplate('hotel', hotelTemplateFixture);
+    const pdfBytes = await this.pdfService.generatePdf(htmlContent);
+    return new StreamableFile(Buffer.from(pdfBytes));
   }
 }
