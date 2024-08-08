@@ -437,6 +437,7 @@ export type Database = {
           food_price: number | null;
           hall_price: number | null;
           halls: number[] | null;
+          duration: number | null;
           halls_original_id: number[] | null;
           hotel: number | null;
           hotel_name: string | null;
@@ -983,7 +984,7 @@ export interface IHall {
 
 export interface IFood {
   packageName: string;
-  days: number;
+  quantity: number;
   persons: number;
   cost: number;
 }

@@ -180,7 +180,7 @@ export class AppService {
 
           food.push({
             packageName: foodData.name || '',
-            days: foodData.count || 0,
+            quantity: foodData.count || 0,
             persons: foodData.persons_count || 0,
             cost: foodData.price,
           });
@@ -210,17 +210,17 @@ export class AppService {
         const request: IRequest = {
           count: requestData.people_count || 0,
           date: requestData.day_start || '',
-          duration: Number(requestData.day_end) - Number(requestData.day_start),
+          duration: requestData.duration || 0,
           name: requestData.name || '',
-          rooms: rooms,
-          roomsTotalCost: 0,
-          foodTotalCost: 0,
-          hallsTotalCost: 0,
+          rooms: rooms || [],
+          roomsTotalCost: requestData.room_price,
+          foodTotalCost: requestData.food_price,
+          hallsTotalCost: requestData.hall_price,
           halls: halls || [],
           food: food || [],
           hotel: hotel,
-          totalCost: requestData.price,
-          id: requestData.id,
+          totalCost: requestData.price || 0,
+          id: requestData.id || 0,
         };
 
         result.requests.push(request);
