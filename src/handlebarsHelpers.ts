@@ -1,6 +1,7 @@
 import * as Handlebars from 'handlebars';
 import { format, parseISO } from 'date-fns';
 import { ru } from 'date-fns/locale';
+import { formatDate } from './utils/formatDate';
 
 Handlebars.registerHelper('isEven', function (index, options) {
   if (index % 2 === 0) {
@@ -34,10 +35,7 @@ Handlebars.registerHelper('pluralizeRussian', function (number, singular, few, m
   }
 });
 
-Handlebars.registerHelper('formatDate', (date) => {
-  const parsedDate = parseISO(date);
-  return format(parsedDate, 'd MMMM yyyy', { locale: ru });
-});
+Handlebars.registerHelper('formatDate', date => formatDate(date));
 
 Handlebars.registerHelper('displayCompanyNumbers', (client) => {
   const { okpo, ogrn, inn, kpp } = client;

@@ -947,6 +947,7 @@ export interface IResult {
 
 export interface IRequest {
   id: number;
+  createdAt: string;
   name: string;
   hotel?: IHotel;
   date: string;

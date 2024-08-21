@@ -13,6 +13,7 @@ import {
 import { createClient } from '@supabase/supabase-js';
 import { HandlebarsService } from './handlebars.service';
 import { PdfService } from './pdf.service';
+import { formatDate } from '../utils/formatDate';
 
 const supabase = createClient<Database>(
   process.env.SUPABASE_URL,
@@ -31,7 +32,7 @@ export class AppService {
     return 'Hello World!';
   }
 
-  public async fetchDataAndSendEmail(body: {
+  public async getResult(body: {
     id: string;
   }): Promise<IResult | string> {
     const { data, error } = await supabase
@@ -214,6 +215,7 @@ export class AppService {
         }
 
         const request: IRequest = {
+          createdAt: requestData.created_at,
           count: requestData.people_count || 0,
           date: requestData.day_start || '',
           duration: requestData.duration || 0,
@@ -239,7 +241,7 @@ export class AppService {
   }
 
   public async sendEmail(body: { id: string }): Promise<void> {
-    const result = await this.fetchDataAndSendEmail({ id: body.id });
+    const result = await this.getResult({ id: body.id });
 
     if (typeof result === 'string') {
       console.log(result);
@@ -266,21 +268,25 @@ export class AppService {
       };
 
       const hotelHtmlForPdf = await this.handlebarsService.renderTemplate('hotel', hotelTemplateContext);
-      const hotelPdfFileBuffer = Buffer.from(
-        await this.pdfService.generatePdf(hotelHtmlForPdf)
-      );
+      // const hotelPdfFileBuffer = Buffer.from(
+      //   await this.pdfService.generatePdf(hotelHtmlForPdf)
+      // );
+
+      const hotelPdfSubject = `Запрос "${hotelTemplateContext.request.client.name}"
+        от ${formatDate(hotelTemplateContext.request.createdAt)}
+      `;
 
       this.mailerService
         .sendMail({
           to: email,
           from: process.env.EMAIL_ID,
-          subject: 'Информация о клиенте',
-          template: 'hotel', // Using the hotel.hbs template
+          subject: hotelPdfSubject,
+          template: 'hotel',
           context: hotelTemplateContext,
           attachments: [
             {
-              filename: 'Информация о клиенте.pdf',
-              content: hotelPdfFileBuffer,
+              filename: `${hotelPdfSubject}.pdf`,
+              // content: hotelPdfFileBuffer,
               contentType: 'application/octet-stream'
             }
           ]
@@ -296,22 +302,26 @@ export class AppService {
     const clientTemplateContext =  {
       request: result.requests[0]
     };
-    const clientHtmlForPdf = await this.handlebarsService.renderTemplate('client', clientTemplateContext);
-    const clientPdfFileBuffer = Buffer.from(
-      await this.pdfService.generatePdf(clientHtmlForPdf)
-    );
+    // const clientHtmlForPdf = await this.handlebarsService.renderTemplate('client', clientTemplateContext);
+    // const clientPdfFileBuffer = Buffer.from(
+    //   await this.pdfService.generatePdf(clientHtmlForPdf)
+    // );
+
+    const clientPdfSubject = `Ваш запрос в отель "${clientTemplateContext.request.hotel.name}"
+      от ${formatDate(clientTemplateContext.request.createdAt)}
+    `;
 
     this.mailerService
       .sendMail({
-        to: result.client.email, // List of receivers email address
-        from: process.env.EMAIL_ID, // Senders email address
-        subject: 'Информация о вашем бронировании',
-        template: 'client', // The `.hbs` extension is appended automatically.
+        to: result.client.email,
+        from: process.env.EMAIL_ID,
+        subject: clientPdfSubject,
+        template: 'client',
         context: clientTemplateContext,
         attachments: [
           {
-            filename: 'Информация о вашем бронировании.pdf',
-            content: clientPdfFileBuffer,
+            filename: `${clientPdfSubject}.pdf`,
+            // content: clientPdfFileBuffer,
             contentType: 'application/octet-stream'
           }
         ]
