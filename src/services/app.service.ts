@@ -2,18 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 import {
   Database,
-  IClient,
-  IFood,
-  IHall,
-  IHotel,
-  IRequest,
-  IResult,
-  IRoom,
-} from '../supabaseTypes';
+
+
+} from '../model/supabaseTypes';
 import { createClient } from '@supabase/supabase-js';
 import { HandlebarsService } from './handlebars.service';
 import { PdfService } from './pdf.service';
 import { formatDate } from '../utils/formatDate';
+import { IClient, IFood, IHall, IHotel, IRequest, IResult, IRoom } from '../model/appTypes';
 
 const supabase = createClient<Database>(
   process.env.SUPABASE_URL,
@@ -28,226 +24,302 @@ export class AppService {
     private readonly pdfService: PdfService,
   ) {}
 
-  getHello(): string {
+  public getHello(): string {
     return 'Hello World!';
-  }
-
-  public async getResult(body: {
-    id: string;
-  }): Promise<IResult | string> {
-    const { data, error } = await supabase
-      .from('request_wrapper')
-      .select('*')
-      .eq('id', body.id);
-
-    if (error) {
-      console.log(error);
-      return 'Error fetching data';
-    }
-
-    const results: IResult[] = [];
-
-    const { data: clientData, error: clientError } = await supabase
-      .from('juridical_info')
-      .select('*')
-      .eq('owner', data[0].owner)
-      .single();
-
-    if (clientError) {
-      console.log('Error fetching client data 1:', clientError);
-      return 'Error fetching client data';
-    }
-
-    const client: IClient = {
-      name: clientData.name || '',
-      address: clientData.address || '',
-      phone: '',
-      fax: '',
-      email: '',
-      okpo: clientData.OKPO || '',
-      ogrn: clientData.OGRN || '',
-      inn: clientData.INN || '',
-      kpp: clientData.KPP || '',
-      contact_name: clientData.lead || '',
-      contact_email: '',
-      contact_phone: '',
-    };
-
-    const { data: userData, error: userError } = await supabase
-      .from('users')
-      .select('*')
-      .eq('id', data[0].owner)
-      .single();
-
-    if (userError) {
-      console.log('Error fetching client data 2:', userError);
-      return 'Error fetching client data';
-    }
-
-    client.email = userData.email;
-    client.phone = userData.phone;
-    client.contact_email = userData.email;
-    client.contact_phone = userData.phone;
-
-    for (const item of data) {
-      const result: IResult = {
-        name: item.name || '',
-        email: '',
-        requests: [],
-        client: client,
-      };
-
-      for (let i = 0; i < item.requests_id.length; i++) {
-        const { data: requestData, error: requestError } = await supabase
-          .from('requests')
-          .select('*')
-          .eq('id', item.requests_id[i])
-          .single();
-
-        if (requestError) {
-          console.log('116', requestError);
-          continue;
-        }
-
-        const { data: hotelData, error: hotelError } = await supabase
-          .from('hotel')
-          .select('*')
-          .eq('id', requestData.hotel)
-          .single();
-
-        if (hotelError) {
-          console.log('127', hotelError);
-          continue;
-        }
-
-        const { data: usersData, error: usersError } = await supabase
-          .from('users')
-          .select('*')
-          .eq('uid', hotelData.owner_id)
-          .single();
-
-        if (usersError) {
-          console.log('136', usersError);
-          continue;
-        }
-
-        const hotel: IHotel = {
-          name: hotelData.name || '',
-          email: usersData.email || '',
-          phone: '', //TODO PHONE
-        };
-
-        const { data: ownerData, error: ownerError } = await supabase
-          .from('users')
-          .select('*')
-          .eq('id', item.owner)
-          .single();
-
-        if (ownerError) {
-          console.log('155', ownerError);
-          continue;
-        }
-
-        result.email = ownerData.email;
-
-        const rooms: IRoom[] = [];
-        for (const roomId of requestData.rooms) {
-          const { data: roomData, error: roomError } = await supabase
-            .from('requests_room_var')
-            .select('*')
-            .eq('id', roomId)
-            .single();
-
-          if (roomError) {
-            console.log('170', roomError);
-            continue;
-          }
-
-          rooms.push({
-            type: roomData.room_name || '',
-            name: roomData.room_name || '',
-            quantity: roomData.room_count || 0,
-            nights: roomData.room_count || 0,
-            cost: roomData.price || 0,
-          });
-        }
-
-        const food: IFood[] = [];
-        for (const foodId of requestData.food) {
-          const { data: foodData, error: foodError } = await supabase
-            .from('requests_food_var')
-            .select('*')
-            .eq('id', foodId)
-            .single();
-
-          if (foodError) {
-            console.log('192', foodError);
-            continue;
-          }
-
-          food.push({
-            packageName: foodData.name || '',
-            quantity: foodData.count || 0,
-            persons: foodData.persons_count || 0,
-            cost: foodData.price,
-          });
-        }
-
-        const halls: IHall[] = [];
-        for (const hallId of requestData.halls) {
-          const { data: hallData, error: hallError } = await supabase
-            .from('requests_hall_var')
-            .select('*')
-            .eq('id', hallId)
-            .single();
-
-          if (hallError) {
-            console.log('213', hallError);
-            continue;
-          }
-
-          halls.push({
-            name: hallData.hall_name || '',
-            cost: hallData.price || 0,
-            seating: hallData.seating || '',
-            days: hallData.days || 0,
-          });
-        }
-
-        const request: IRequest = {
-          createdAt: requestData.created_at,
-          count: requestData.people_count || 0,
-          date: requestData.day_start || '',
-          duration: requestData.duration || 0,
-          name: requestData.name || '',
-          rooms: rooms || [],
-          roomsTotalCost: requestData.room_price,
-          foodTotalCost: requestData.food_price,
-          hallsTotalCost: requestData.hall_price,
-          halls: halls || [],
-          food: food || [],
-          hotel: hotel,
-          totalCost: requestData.price || 0,
-          id: requestData.id || 0,
-        };
-
-        result.requests.push(request);
-      }
-
-      results.push(result);
-    }
-
-    return results.length > 0 ? results[0] : 'No data found';
   }
 
   public async sendEmail(body: { id: string }): Promise<void> {
     const result = await this.getResult({ id: body.id });
 
-    if (typeof result === 'string') {
-      console.log(result);
-      return;
+    if (!result) {
+      throw new Error(`No requests for id: ${body.id}`)
     }
 
+    await this.sendEmailsToHotelOwners(result);
+    await this.sendEmailToClient(result);
+  }
+
+  private async getResult(body: { id: string; }): Promise<IResult> {
+    const requestWrappers = await this.getRequestWrappers(body.id);
+    const client = await this.getClient(requestWrappers[0].owner);
+
+    const results: IResult[] = [];
+    for (let requestWrapper of requestWrappers) {
+      const result = await this.getResultForRequestWrapper(requestWrapper, client);
+      results.push(result);
+    }
+
+    if (results.length > 0) {
+      return results[0];
+    }
+    return null;
+  }
+
+  private async getRequestWrappers(id: string) {
+    const { data, error } = await supabase
+      .from('request_wrapper')
+      .select('*')
+      .eq('id', id);
+
+    if (error) {
+      console.log(error);
+      throw 'Error fetching data';
+    }
+    return data;
+  }
+
+  private async getClient(id: number) {
+    const client = await this.getJuridicalInfo(id);
+    const user = await this.getUserById(id);
+
+    client.email = user.email;
+    client.phone = user.phone;
+    client.contact_email = user.email;
+    client.contact_phone = user.phone;
+    return client
+  }
+
+  private async getResultForRequestWrapper(requestWrapper, client: IClient) {
+    const ownerUser = await this.getUserById(requestWrapper.owner)
+
+    const requests = await Promise.all(
+      (requestWrapper.requests_id || [])
+        .map(requestId => this.getRequestForRequestId(requestId))
+    );
+
+    return <IResult>{
+      name: requestWrapper.name || '',
+      email: ownerUser.email,
+      requests,
+      client: client,
+    };
+  }
+
+  private async getRequestById(id: number) {
+    const { data, error } = await supabase
+      .from('requests')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) {
+      console.log('116', error);
+      throw error;
+    }
+    return data;
+  }
+
+  private async getJuridicalInfo(ownerId: number): Promise<IClient> {
+    const { data, error } = await supabase
+      .from('juridical_info')
+      .select('*')
+      .eq('owner', ownerId)
+      .single();
+
+    if (error) {
+      console.log('Error fetching client data 1:', error);
+      throw 'Error fetching client data';
+    }
+
+    return <IClient>{
+      name: data.name || '',
+      address: data.address || '',
+      phone: '',
+      fax: '',
+      email: '',
+      okpo: data.OKPO || '',
+      ogrn: data.OGRN || '',
+      inn: data.INN || '',
+      kpp: data.KPP || '',
+      contact_name: data.lead || '',
+      contact_email: '',
+      contact_phone: '',
+    };
+  }
+
+  private async getUserById(id: number) {
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) {
+      throw error;
+    }
+    return data;
+  }
+
+  private async getUserByUid(uids: string[]) {
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('uid', uids)
+      .single();
+
+    if (error) {
+      throw error;
+    }
+    return data;
+  }
+
+  private async getRequestForRequestId(requestId: number) {
+    const request = await this.getRequestById(requestId);
+    const hotel = await this.getHotel(request.hotel)
+    const rooms = await this.getRooms(request.rooms);
+    const food = await this.getFood(request.food);
+    const halls = await this.getHalls(request.halls);
+
+    return <IRequest>{
+      createdAt: request.created_at,
+      count: request.people_count || 0,
+      date: request.day_start || '',
+      duration: request.duration || 0,
+      name: request.name || '',
+      rooms: rooms || [],
+      roomsTotalCost: request.room_price,
+      foodTotalCost: request.food_price,
+      hallsTotalCost: request.hall_price,
+      halls: halls || [],
+      food: food || [],
+      hotel: hotel,
+      totalCost: request.price || 0,
+      id: request.id || 0,
+    };
+
+  }
+
+  private async getHotel(hotelId: number) {
+    const { data: hotel, error } = await supabase
+      .from('hotel')
+      .select('*')
+      .eq('id', hotelId)
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    const hotelOwner = await this.getUserByUid(hotel.owner_id);
+    const hotelOwnerClient = await this.getClient(hotelOwner.id)
+
+    return <IHotel>{
+      name: hotel.name || '',
+      email: hotelOwner.email || '',
+      phone: hotelOwner.phone || '',
+      owner: hotelOwnerClient
+    };
+
+  }
+
+  private async getRooms(roomIds: number[]) {
+    const rooms: IRoom[] = [];
+    for (const roomId of roomIds) {
+      const { data, error } = await supabase
+        .from('requests_room_var')
+        .select('*')
+        .eq('id', roomId)
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      rooms.push({
+        type: data.room_name || '',
+        name: data.room_name || '',
+        quantity: data.room_count || 0,
+        nights: data.room_count || 0,
+        cost: data.price || 0,
+      });
+    }
+    return rooms
+  }
+
+  private async getFood(foodIds: number[]) {
+    const food: IFood[] = [];
+    for (const foodId of foodIds) {
+      const { data: foodData, error: foodError } = await supabase
+        .from('requests_food_var')
+        .select('*')
+        .eq('id', foodId)
+        .single();
+
+      if (foodError) {
+        console.log('192', foodError);
+        continue;
+      }
+
+      food.push({
+        packageName: foodData.name || '',
+        quantity: foodData.count || 0,
+        persons: foodData.persons_count || 0,
+        cost: foodData.price,
+      });
+    }
+    return food;
+  }
+
+  private async getHalls(hallIds: number[]) {
+    const halls: IHall[] = [];
+    for (const hallId of hallIds) {
+      const { data, error } = await supabase
+        .from('requests_hall_var')
+        .select('*')
+        .eq('id', hallId)
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      halls.push({
+        name: data.hall_name || '',
+        cost: data.price || 0,
+        seating: data.seating || '',
+        days: data.days || 0,
+      });
+    }
+    return halls;
+  }
+
+  private async sendEmailToClient(result: IResult) {
+    const clientTemplateContext = {
+      request: result.requests[0],
+    };
+    const clientHtmlForPdf = await this.handlebarsService.renderTemplate('client', clientTemplateContext);
+    const clientPdfFileBuffer = Buffer.from(
+      await this.pdfService.generatePdf(clientHtmlForPdf)
+    );
+
+    const clientPdfSubject = `Ваш запрос в отель "${clientTemplateContext.request.hotel.name}"
+      от ${formatDate(clientTemplateContext.request.createdAt)}
+    `;
+
+    this.mailerService
+      .sendMail({
+        to: result.client.email,
+        from: process.env.EMAIL_ID,
+        subject: clientPdfSubject,
+        template: 'client',
+        context: clientTemplateContext,
+        attachments: [
+          {
+            filename: `${clientPdfSubject}.pdf`,
+            content: clientPdfFileBuffer,
+            contentType: 'application/octet-stream',
+          },
+        ],
+      })
+      .then((success) => {
+        console.log(success);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  private async sendEmailsToHotelOwners(result: IResult) {
     const hotelOwners = result.requests
       .map((request) => request.hotel.email)
       .filter((value, index, self) => self.indexOf(value) === index);
@@ -268,9 +340,9 @@ export class AppService {
       };
 
       const hotelHtmlForPdf = await this.handlebarsService.renderTemplate('hotel', hotelTemplateContext);
-      // const hotelPdfFileBuffer = Buffer.from(
-      //   await this.pdfService.generatePdf(hotelHtmlForPdf)
-      // );
+      const hotelPdfFileBuffer = Buffer.from(
+        await this.pdfService.generatePdf(hotelHtmlForPdf)
+      );
 
       const hotelPdfSubject = `Запрос "${hotelTemplateContext.request.client.name}"
         от ${formatDate(hotelTemplateContext.request.createdAt)}
@@ -286,10 +358,10 @@ export class AppService {
           attachments: [
             {
               filename: `${hotelPdfSubject}.pdf`,
-              // content: hotelPdfFileBuffer,
-              contentType: 'application/octet-stream'
-            }
-          ]
+              content: hotelPdfFileBuffer,
+              contentType: 'application/octet-stream',
+            },
+          ],
         })
         .then((success) => {
           console.log(`Email sent successfully to ${email}`);
@@ -298,39 +370,5 @@ export class AppService {
           console.log(`Failed to send email to ${email}: ${err}`);
         });
     }
-
-    const clientTemplateContext =  {
-      request: result.requests[0]
-    };
-    // const clientHtmlForPdf = await this.handlebarsService.renderTemplate('client', clientTemplateContext);
-    // const clientPdfFileBuffer = Buffer.from(
-    //   await this.pdfService.generatePdf(clientHtmlForPdf)
-    // );
-
-    const clientPdfSubject = `Ваш запрос в отель "${clientTemplateContext.request.hotel.name}"
-      от ${formatDate(clientTemplateContext.request.createdAt)}
-    `;
-
-    this.mailerService
-      .sendMail({
-        to: result.client.email,
-        from: process.env.EMAIL_ID,
-        subject: clientPdfSubject,
-        template: 'client',
-        context: clientTemplateContext,
-        attachments: [
-          {
-            filename: `${clientPdfSubject}.pdf`,
-            // content: clientPdfFileBuffer,
-            contentType: 'application/octet-stream'
-          }
-        ]
-      })
-      .then((success) => {
-        console.log(success);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
   }
 }

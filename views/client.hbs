@@ -59,7 +59,9 @@
               </tr>
               <tr>
                 <td style="font-size: 12px;">
-                  {{ request.hotel.email }}, {{ request.hotel.phone }}
+                  {{ request.hotel.email }},
+                  {{ request.hotel.phone }},
+                  {{ displayCompanyNumbers request.hotel.owner }}
                 </td>
               </tr>
               <tr>

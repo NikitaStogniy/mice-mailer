@@ -60,7 +60,20 @@
     "hotel": {
       "name": "Гостиница Лучшая",
       "email": "contact@hotelbest.ru",
-      "phone": "+7 (495) 123-45-67"
+      "phone": "+7 (495) 123-45-67",
+      "owner": {
+        "name": "ООО “Триумф”",
+        "address": "Декабристов ул., д. 345-6, оф. 200, Москва, 123456",
+        "phone": "+7 (123) 456-78-90",
+        "email": "info@sitename.com",
+        "okpo": "123454678",
+        "ogrn": "1234567890123",
+        "inn": "1234567890",
+        "kpp": "123456789",
+        "contact_name": "Иван Иванович Иванов",
+        "contact_email": "mail@maildomen.com",
+        "contact_phone": "+7 (987) 654-32-10"
+      }
     },
     "totalCost": 425000
   }
