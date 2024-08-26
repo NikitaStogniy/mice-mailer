@@ -1,8 +1,11 @@
+import { Database } from './supabaseTypes';
+
 export interface IResult {
   name: string;
   email: string;
   requests: IRequest[];
-  client: IClient;
+  owner: User;
+  juridicalInfo: JuridicalInfo;
 }
 
 export interface IRequest {
@@ -22,11 +25,15 @@ export interface IRequest {
   totalCost: number;
 }
 
+export type JuridicalInfo = Database['public']['Tables']['juridical_info']['Row'];
+export type User = Database['public']['Tables']['users']['Row'];
+
 export interface IHotel {
   name: string;
   email: string;
   phone: string;
-  owner: IClient
+  owner: User;
+  juridicalInfo: JuridicalInfo;
 }
 
 export interface IRoom {
@@ -49,52 +56,4 @@ export interface IFood {
   quantity: number;
   persons: number;
   cost: number;
-}
-
-export interface IClient {
-  name: string;
-  address: string;
-  phone: string;
-  fax: string;
-  email: string;
-  okpo: string;
-  ogrn: string;
-  inn: string;
-  kpp: string;
-  contact_name: string;
-  contact_email: string;
-  contact_phone: string;
-}
-
-interface Hall {
-  name: string;
-  seating: string;
-  days: number;
-  cost: number;
-}
-
-interface FoodItem {
-  packageName: string;
-  quantity: number;
-  persons: number;
-  cost: number;
-}
-
-interface Room {
-  name: string;
-  quantity: number;
-  nights: number;
-  cost: number;
-}
-
-interface RequestDto {
-  id: number;
-  hotel: IClient;
-  halls?: Hall[];
-  hallsTotalCost?: number;
-  food?: FoodItem[];
-  foodTotalCost?: number;
-  rooms?: Room[];
-  roomsTotalCost?: number;
-  totalCost?: number;
 }

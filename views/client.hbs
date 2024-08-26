@@ -59,9 +59,11 @@
               </tr>
               <tr>
                 <td style="font-size: 12px;">
+                  {{ request.hotel.address }},
                   {{ request.hotel.email }},
                   {{ request.hotel.phone }},
-                  {{ displayCompanyNumbers request.hotel.owner }}
+                  {{ displayCompanyNumbers request.hotel.juridicalInfo }}
+                  {{ displayBankAccountDetails request.hotel.juridicalInfo }}
                 </td>
               </tr>
               <tr>
@@ -71,7 +73,7 @@
               </tr>
               <tr>
                 <td style="font-size: 12px;">
-                  {{ formatDate request.date }}, {{pluralizeRussian request.duration 'день' 'дня' 'дней'}}, {{pluralizeRussian request.count 'участников' 'участников' 'участников'}}
+                  {{ formatDate request.date }}, {{ pluralizeRussian request.duration 'день' 'дня' 'дней' }}, {{pluralizeRussian request.count 'участников' 'участников' 'участников'}}
                 </td>
               </tr>
             </table>

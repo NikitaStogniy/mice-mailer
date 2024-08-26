@@ -64,14 +64,16 @@
               </tr>
               <tr>
                 <td style="font-size: 12px;">
-                  {{ request.client.name }}
+                  {{ request.juridicalInfo.name }}
                 </td>
               </tr>
               <tr>
                 <td style="font-size: 12px; padding: 5px 0 0 45px; line-height: 20px">
-                  {{ request.client.address }}<br />
-                  Тел./факс {{ request.client.phone }}, e-mail: {{ request.client.email }}<br/>
-                  {{ displayCompanyNumbers request.client }}
+                  {{#if request.juridicalInfo.lead}}{{ request.juridicalInfo.lead }}<br />{{/if}}
+                  {{ request.juridicalInfo.address }}<br />
+                  Тел./факс {{ request.owner.phone }}, e-mail: {{ request.owner.email }}<br/>
+                  {{ displayCompanyNumbers request.juridicalInfo }}<br/>
+                  {{ displayBankAccountDetails request.juridicalInfo }}
                 </td>
               </tr>
               <tr>
@@ -81,9 +83,9 @@
               </tr>
               <tr>
                 <td style="font-size: 12px; text-align: right">
-                  {{request.client.contact_name}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                  {{request.client.contact_email}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                  {{request.client.contact_phone}}
+                  {{request.owner.name}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  {{request.owner.email}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  {{request.owner.phone}}
                 </td>
               </tr>
             </table>

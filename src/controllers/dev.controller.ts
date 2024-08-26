@@ -1,10 +1,9 @@
-import { Controller, Get, Header, Post, Render, Res, StreamableFile } from '@nestjs/common';
+import { Controller, Get, Header, Post, Render, StreamableFile } from '@nestjs/common';
 import * as clientTemplateFixture from '../../fixtures/client.json';
 import * as hotelTemplateFixture from '../../fixtures/hotel.json';
 import { MailerService } from '@nestjs-modules/mailer';
 import { PdfService } from '../services/pdf.service';
 import { HandlebarsService } from '../services/handlebars.service';
-import { Response } from 'express';
 
 @Controller('dev')
 export class DevController {

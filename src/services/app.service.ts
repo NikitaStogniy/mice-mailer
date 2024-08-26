@@ -9,7 +9,7 @@ import { createClient } from '@supabase/supabase-js';
 import { HandlebarsService } from './handlebars.service';
 import { PdfService } from './pdf.service';
 import { formatDate } from '../utils/formatDate';
-import { IClient, IFood, IHall, IHotel, IRequest, IResult, IRoom } from '../model/appTypes';
+import { IFood, IHall, IHotel, IRequest, IResult, IRoom } from '../model/appTypes';
 
 const supabase = createClient<Database>(
   process.env.SUPABASE_URL,
@@ -41,11 +41,10 @@ export class AppService {
 
   private async getResult(body: { id: string; }): Promise<IResult> {
     const requestWrappers = await this.getRequestWrappers(body.id);
-    const client = await this.getClient(requestWrappers[0].owner);
 
     const results: IResult[] = [];
     for (let requestWrapper of requestWrappers) {
-      const result = await this.getResultForRequestWrapper(requestWrapper, client);
+      const result = await this.getResultForRequestWrapper(requestWrapper);
       results.push(result);
     }
 
@@ -68,19 +67,9 @@ export class AppService {
     return data;
   }
 
-  private async getClient(id: number) {
-    const client = await this.getJuridicalInfo(id);
-    const user = await this.getUserById(id);
-
-    client.email = user.email;
-    client.phone = user.phone;
-    client.contact_email = user.email;
-    client.contact_phone = user.phone;
-    return client
-  }
-
-  private async getResultForRequestWrapper(requestWrapper, client: IClient) {
-    const ownerUser = await this.getUserById(requestWrapper.owner)
+  private async getResultForRequestWrapper(requestWrapper) {
+    const owner = await this.getUserById(requestWrapper.owner)
+    const juridicalInfo = await this.getJuridicalInfo(requestWrapper.owner)
 
     const requests = await Promise.all(
       (requestWrapper.requests_id || [])
@@ -89,9 +78,9 @@ export class AppService {
 
     return <IResult>{
       name: requestWrapper.name || '',
-      email: ownerUser.email,
       requests,
-      client: client,
+      owner,
+      juridicalInfo
     };
   }
 
@@ -103,13 +92,12 @@ export class AppService {
       .single();
 
     if (error) {
-      console.log('116', error);
-      throw error;
+      console.log('getRequestById', id, error);
     }
     return data;
   }
 
-  private async getJuridicalInfo(ownerId: number): Promise<IClient> {
+  private async getJuridicalInfo(ownerId: number) {
     const { data, error } = await supabase
       .from('juridical_info')
       .select('*')
@@ -117,24 +105,10 @@ export class AppService {
       .single();
 
     if (error) {
-      console.log('Error fetching client data 1:', error);
-      throw 'Error fetching client data';
+      console.log('getJuridicalInfo', ownerId,  error);
     }
 
-    return <IClient>{
-      name: data.name || '',
-      address: data.address || '',
-      phone: '',
-      fax: '',
-      email: '',
-      okpo: data.OKPO || '',
-      ogrn: data.OGRN || '',
-      inn: data.INN || '',
-      kpp: data.KPP || '',
-      contact_name: data.lead || '',
-      contact_email: '',
-      contact_phone: '',
-    };
+    return data;
   }
 
   private async getUserById(id: number) {
@@ -145,7 +119,7 @@ export class AppService {
       .single();
 
     if (error) {
-      throw error;
+      console.log('getUserById', id,  error);
     }
     return data;
   }
@@ -158,7 +132,7 @@ export class AppService {
       .single();
 
     if (error) {
-      throw error;
+      console.log('getUserById', uids,  error);
     }
     return data;
   }
@@ -171,20 +145,20 @@ export class AppService {
     const halls = await this.getHalls(request.halls);
 
     return <IRequest>{
+      id: request.id || 0,
       createdAt: request.created_at,
       count: request.people_count || 0,
       date: request.day_start || '',
       duration: request.duration || 0,
       name: request.name || '',
-      rooms: rooms || [],
+      rooms,
+      halls,
+      food,
+      hotel,
       roomsTotalCost: request.room_price,
       foodTotalCost: request.food_price,
       hallsTotalCost: request.hall_price,
-      halls: halls || [],
-      food: food || [],
-      hotel: hotel,
       totalCost: request.price || 0,
-      id: request.id || 0,
     };
 
   }
@@ -197,17 +171,18 @@ export class AppService {
       .single();
 
     if (error) {
-      throw error;
+      console.log('getHotel', hotelId, error);
     }
 
-    const hotelOwner = await this.getUserByUid(hotel.owner_id);
-    const hotelOwnerClient = await this.getClient(hotelOwner.id)
+    const owner = await this.getUserByUid(hotel.owner_id);
+    const juridicalInfo = await this.getJuridicalInfo(owner.id);
 
     return <IHotel>{
       name: hotel.name || '',
-      email: hotelOwner.email || '',
-      phone: hotelOwner.phone || '',
-      owner: hotelOwnerClient
+      email: owner.email || '',
+      phone: owner.phone || '',
+      owner,
+      juridicalInfo
     };
 
   }
@@ -222,7 +197,8 @@ export class AppService {
         .single();
 
       if (error) {
-        throw error;
+        console.log('getRooms', roomId, error);
+        continue;
       }
 
       rooms.push({
@@ -239,22 +215,22 @@ export class AppService {
   private async getFood(foodIds: number[]) {
     const food: IFood[] = [];
     for (const foodId of foodIds) {
-      const { data: foodData, error: foodError } = await supabase
+      const { data, error } = await supabase
         .from('requests_food_var')
         .select('*')
         .eq('id', foodId)
         .single();
 
-      if (foodError) {
-        console.log('192', foodError);
+      if (error) {
+        console.log('getFood', foodId, error);
         continue;
       }
 
       food.push({
-        packageName: foodData.name || '',
-        quantity: foodData.count || 0,
-        persons: foodData.persons_count || 0,
-        cost: foodData.price,
+        packageName: data.name || '',
+        quantity: data.count || 0,
+        persons: data.persons_count || 0,
+        cost: data.price,
       });
     }
     return food;
@@ -270,7 +246,8 @@ export class AppService {
         .single();
 
       if (error) {
-        throw error;
+        console.log('getHalls', hallId, error);
+        continue;
       }
 
       halls.push({
@@ -298,7 +275,7 @@ export class AppService {
 
     this.mailerService
       .sendMail({
-        to: result.client.email,
+        to: 'laland@ya.ru',//result.owner.email,
         from: process.env.EMAIL_ID,
         subject: clientPdfSubject,
         template: 'client',
@@ -326,15 +303,14 @@ export class AppService {
 
     for (const email of hotelOwners) {
       const request = result.requests.find((req) => req.hotel.email === email);
-      console.log(result.client);
-
       const hotelTemplateContext = {
         request: {
           ...request,
-          date_from: request.date,
-          date_to: request.date,
-          client: {
-            ...result.client,
+          owner: {
+            ...result.owner,
+          },
+          juridicalInfo: {
+            ...result.juridicalInfo,
           },
         },
       };
@@ -344,13 +320,13 @@ export class AppService {
         await this.pdfService.generatePdf(hotelHtmlForPdf)
       );
 
-      const hotelPdfSubject = `Запрос "${hotelTemplateContext.request.client.name}"
+      const hotelPdfSubject = `Запрос от "${hotelTemplateContext.request.juridicalInfo.name}"
         от ${formatDate(hotelTemplateContext.request.createdAt)}
       `;
 
       this.mailerService
         .sendMail({
-          to: email,
+          to: 'laland@ya.ru',// email,
           from: process.env.EMAIL_ID,
           subject: hotelPdfSubject,
           template: 'hotel',
