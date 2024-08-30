@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 import {
-  Database,
-
-
+  Database
 } from '../model/supabaseTypes';
 import { createClient } from '@supabase/supabase-js';
 import { HandlebarsService } from './handlebars.service';
@@ -179,6 +177,7 @@ export class AppService {
 
     return <IHotel>{
       name: hotel.name || '',
+      address: hotel.address || '',
       email: owner.email || '',
       phone: owner.phone || '',
       owner,
@@ -326,7 +325,7 @@ export class AppService {
 
       this.mailerService
         .sendMail({
-          to: 'laland@ya.ru',// email,
+          to: 'laland@ya.ru',//email,
           from: process.env.EMAIL_ID,
           subject: hotelPdfSubject,
           template: 'hotel',

@@ -72,6 +72,7 @@
                   {{#if request.juridicalInfo.lead}}{{ request.juridicalInfo.lead }}<br />{{/if}}
                   {{ request.juridicalInfo.address }}<br />
                   Тел./факс {{ request.owner.phone }}, e-mail: {{ request.owner.email }}<br/>
+                  {{#if request.owner.extra_phone}}Добавочный номер: {{ request.owner.extra_phone }}<br />{{/if}}
                   {{ displayCompanyNumbers request.juridicalInfo }}<br/>
                   {{ displayBankAccountDetails request.juridicalInfo }}
                 </td>
