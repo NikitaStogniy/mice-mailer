@@ -274,7 +274,7 @@ export class AppService {
 
     this.mailerService
       .sendMail({
-        to: 'laland@ya.ru',//result.owner.email,
+        to: result.owner.email,
         from: process.env.EMAIL_ID,
         subject: clientPdfSubject,
         template: 'client',
@@ -325,7 +325,7 @@ export class AppService {
 
       this.mailerService
         .sendMail({
-          to: 'laland@ya.ru',//email,
+          to: email,
           from: process.env.EMAIL_ID,
           subject: hotelPdfSubject,
           template: 'hotel',
