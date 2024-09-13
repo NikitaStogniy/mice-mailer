@@ -268,9 +268,7 @@ export class AppService {
       await this.pdfService.generatePdf(clientHtmlForPdf)
     );
 
-    const clientPdfSubject = `Ваш запрос в отель "${clientTemplateContext.request.hotel.name}"
-      от ${formatDate(clientTemplateContext.request.createdAt)}
-    `;
+    const clientPdfSubject = `Ваш запрос в отель ${clientTemplateContext.request.hotel.name} от ${formatDate(clientTemplateContext.request.createdAt)}`;
 
     this.mailerService
       .sendMail({
@@ -283,7 +281,7 @@ export class AppService {
           {
             filename: `${clientPdfSubject}.pdf`,
             content: clientPdfFileBuffer,
-            contentType: 'application/octet-stream',
+            contentType: 'application/pdf',
           },
         ],
       })
@@ -319,9 +317,7 @@ export class AppService {
         await this.pdfService.generatePdf(hotelHtmlForPdf)
       );
 
-      const hotelPdfSubject = `Запрос от "${hotelTemplateContext.request.juridicalInfo.name}"
-        от ${formatDate(hotelTemplateContext.request.createdAt)}
-      `;
+      const hotelPdfSubject = `Запрос от ${hotelTemplateContext.request.juridicalInfo.name} от ${formatDate(hotelTemplateContext.request.createdAt)}`;
 
       this.mailerService
         .sendMail({
@@ -334,7 +330,7 @@ export class AppService {
             {
               filename: `${hotelPdfSubject}.pdf`,
               content: hotelPdfFileBuffer,
-              contentType: 'application/octet-stream',
+              contentType: 'application/pdf',
             },
           ],
         })
