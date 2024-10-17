@@ -1,13 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
-import {
-  Database
-} from '../model/supabaseTypes';
+import { Database } from '../model/supabaseTypes';
 import { createClient } from '@supabase/supabase-js';
 import { HandlebarsService } from './handlebars.service';
 import { PdfService } from './pdf.service';
 import { formatDate } from '../utils/formatDate';
-import { IFood, IHall, IHotel, IRequest, IResult, IRoom } from '../model/appTypes';
+import {
+  IFood,
+  IHall,
+  IHotel,
+  IRequest,
+  IResult,
+  IRoom,
+  User,
+} from '../model/appTypes';
 
 const supabase = createClient<Database>(
   process.env.SUPABASE_URL,
@@ -30,14 +36,14 @@ export class AppService {
     const result = await this.getResult({ id: body.id });
 
     if (!result) {
-      throw new Error(`No requests for id: ${body.id}`)
+      throw new Error(`No requests for id: ${body.id}`);
     }
 
     await this.sendEmailsToHotelOwners(result);
-    await this.sendEmailToClient(result);
+    await this.sendEmailsToClient(result);
   }
 
-  private async getResult(body: { id: string; }): Promise<IResult> {
+  private async getResult(body: { id: string }): Promise<IResult> {
     const requestWrappers = await this.getRequestWrappers(body.id);
 
     const results: IResult[] = [];
@@ -66,19 +72,20 @@ export class AppService {
   }
 
   private async getResultForRequestWrapper(requestWrapper) {
-    const owner = await this.getUserById(requestWrapper.owner)
-    const juridicalInfo = await this.getJuridicalInfo(requestWrapper.owner)
+    const owner = await this.getUserById(requestWrapper.owner);
+    const juridicalInfo = await this.getJuridicalInfo(requestWrapper.owner);
 
     const requests = await Promise.all(
-      (requestWrapper.requests_id || [])
-        .map(requestId => this.getRequestForRequestId(requestId))
+      (requestWrapper.requests_id || []).map((requestId) =>
+        this.getRequestForRequestId(requestId),
+      ),
     );
 
     return <IResult>{
       name: requestWrapper.name || '',
       requests,
       owner,
-      juridicalInfo
+      juridicalInfo,
     };
   }
 
@@ -103,7 +110,7 @@ export class AppService {
       .single();
 
     if (error) {
-      console.log('getJuridicalInfo', ownerId,  error);
+      console.log('getJuridicalInfo', ownerId, error);
     }
 
     return data;
@@ -117,7 +124,7 @@ export class AppService {
       .single();
 
     if (error) {
-      console.log('getUserById', id,  error);
+      console.log('getUserById', id, error);
     }
     return data;
   }
@@ -130,14 +137,14 @@ export class AppService {
       .single();
 
     if (error) {
-      console.log('getUserById', uids,  error);
+      console.log('getUserById', uids, error);
     }
     return data;
   }
 
   private async getRequestForRequestId(requestId: number) {
     const request = await this.getRequestById(requestId);
-    const hotel = await this.getHotel(request.hotel)
+    const hotel = await this.getHotel(request.hotel);
     const rooms = await this.getRooms(request.rooms);
     const food = await this.getFood(request.food);
     const halls = await this.getHalls(request.halls);
@@ -158,7 +165,6 @@ export class AppService {
       hallsTotalCost: request.hall_price,
       totalCost: request.price || 0,
     };
-
   }
 
   private async getHotel(hotelId: number) {
@@ -181,9 +187,8 @@ export class AppService {
       email: owner.email || '',
       phone: owner.phone || '',
       owner,
-      juridicalInfo
+      juridicalInfo,
     };
-
   }
 
   private async getRooms(roomIds: number[]) {
@@ -208,7 +213,7 @@ export class AppService {
         cost: data.price || 0,
       });
     }
-    return rooms
+    return rooms;
   }
 
   private async getFood(foodIds: number[]) {
@@ -259,20 +264,29 @@ export class AppService {
     return halls;
   }
 
-  private async sendEmailToClient(result: IResult) {
+  private async sendEmailsToClient(result: IResult) {
+    for(const request of result.requests) {
+      await this.sendEmailToClient(request, result.owner);
+    }
+  }
+
+  private async sendEmailToClient(request: IRequest, owner: User) {
     const clientTemplateContext = {
-      request: result.requests[0],
+      request,
     };
-    const clientHtmlForPdf = await this.handlebarsService.renderTemplate('client', clientTemplateContext);
+    const clientHtmlForPdf = await this.handlebarsService.renderTemplate(
+      'client',
+      clientTemplateContext,
+    );
     const clientPdfFileBuffer = Buffer.from(
-      await this.pdfService.generatePdf(clientHtmlForPdf)
+      await this.pdfService.generatePdf(clientHtmlForPdf),
     );
 
     const clientPdfSubject = `Ваш запрос в отель ${clientTemplateContext.request.hotel.name} от ${formatDate(clientTemplateContext.request.createdAt)}`;
 
     this.mailerService
       .sendMail({
-        to: result.owner.email,
+        to: owner.email,
         from: process.env.EMAIL_ID,
         subject: clientPdfSubject,
         template: 'client',
@@ -299,47 +313,59 @@ export class AppService {
       .filter((value, index, self) => self.indexOf(value) === index);
 
     for (const email of hotelOwners) {
-      const request = result.requests.find((req) => req.hotel.email === email);
-      const hotelTemplateContext = {
-        request: {
-          ...request,
-          owner: {
-            ...result.owner,
-          },
-          juridicalInfo: {
-            ...result.juridicalInfo,
-          },
-        },
-      };
-
-      const hotelHtmlForPdf = await this.handlebarsService.renderTemplate('hotel', hotelTemplateContext);
-      const hotelPdfFileBuffer = Buffer.from(
-        await this.pdfService.generatePdf(hotelHtmlForPdf)
-      );
-
-      const hotelPdfSubject = `Запрос от ${hotelTemplateContext.request.juridicalInfo.name} от ${formatDate(hotelTemplateContext.request.createdAt)}`;
-
-      this.mailerService
-        .sendMail({
-          to: email,
-          from: process.env.EMAIL_ID,
-          subject: hotelPdfSubject,
-          template: 'hotel',
-          context: hotelTemplateContext,
-          attachments: [
-            {
-              filename: `${hotelPdfSubject}.pdf`,
-              content: hotelPdfFileBuffer,
-              contentType: 'application/pdf',
-            },
-          ],
-        })
-        .then((success) => {
-          console.log(`Email sent successfully to ${email}`);
-        })
-        .catch((err) => {
-          console.log(`Failed to send email to ${email}: ${err}`);
-        });
+      await this.sendEmailsToHotelOwner(email, result);
     }
+  }
+
+  private async sendEmailsToHotelOwner(
+    hotelOwnerEmail: string,
+    result: IResult,
+  ) {
+    const request = result.requests.find(
+      (req) => req.hotel.email === hotelOwnerEmail,
+    );
+    const hotelTemplateContext = {
+      request: {
+        ...request,
+        owner: {
+          ...result.owner,
+        },
+        juridicalInfo: {
+          ...result.juridicalInfo,
+        },
+      },
+    };
+
+    const hotelHtmlForPdf = await this.handlebarsService.renderTemplate(
+      'hotel',
+      hotelTemplateContext,
+    );
+    const hotelPdfFileBuffer = Buffer.from(
+      await this.pdfService.generatePdf(hotelHtmlForPdf),
+    );
+
+    const hotelPdfSubject = `Запрос от ${hotelTemplateContext.request.juridicalInfo.name} от ${formatDate(hotelTemplateContext.request.createdAt)}`;
+
+    this.mailerService
+      .sendMail({
+        to: hotelOwnerEmail,
+        from: process.env.EMAIL_ID,
+        subject: hotelPdfSubject,
+        template: 'hotel',
+        context: hotelTemplateContext,
+        attachments: [
+          {
+            filename: `${hotelPdfSubject}.pdf`,
+            content: hotelPdfFileBuffer,
+            contentType: 'application/pdf',
+          },
+        ],
+      })
+      .then((success) => {
+        console.log(`Email sent successfully to ${hotelOwnerEmail}`);
+      })
+      .catch((err) => {
+        console.log(`Failed to send email to ${hotelOwnerEmail}: ${err}`);
+      });
   }
 }
