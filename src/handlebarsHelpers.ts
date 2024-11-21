@@ -38,6 +38,11 @@ Handlebars.registerHelper('pluralizeRussian', function (number, singular, few, m
 
 Handlebars.registerHelper('formatDate', date => formatDate(date));
 
+Handlebars.registerHelper("tableRowBackgroundColor", function(index) {
+  const colorMap = ['#fff', '#F0F0FA', '#C0C4EC'];
+  return colorMap[index % 3];
+});
+
 Handlebars.registerHelper('displayCompanyNumbers', (juridicalInfo: JuridicalInfo) => {
   const {
     OKPO,

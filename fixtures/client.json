@@ -1,78 +1,139 @@
 {
-  "id": 148,
-  "createdAt": "2024-08-26T22:04:48.040357+00:00",
-  "count": 100,
-  "date": "2024-08-27",
-  "duration": 1,
-  "name": "Стратегичекая сессия клуба \"кому за 35\"",
-  "rooms": [
-    {
-      "type": "Номер классический",
-      "name": "Номер классический",
-      "quantity": 1,
-      "nights": 1,
-      "cost": 2000
-    },
-    {
-      "type": "Люкс",
-      "name": "Люкс",
-      "quantity": 1,
-      "nights": 1,
-      "cost": 90000
-    }
-  ],
-  "halls": [
-    {
-      "name": "Государственный центральный театральный зал",
-      "cost": 5600,
-      "seating": "Кабаре",
-      "days": 1
-    }
-  ],
-  "food": [
-    {
-      "packageName": "Завтрак",
-      "quantity": 1,
-      "persons": 1,
-      "cost": 3000
-    },
-    {
-      "packageName": "Перерыв",
-      "quantity": 1,
-      "persons": 1,
-      "cost": 500
-    }
-  ],
-  "hotel": {
-    "name": "Mercure Москва Павелецкая",
-    "email": "vavilovvladislavvv@gmail.com",
-    "phone": "+7 (160) 232-86-71",
-    "owner": {
-      "created_at": "2024-08-12T10:25:30.976908+00:00",
-      "uid": "b8cca382-1724-4661-a7c5-7a267a970f6a",
-      "name": "Марцинюк Артём Артемович",
-      "role": "HOTEL",
+  "request": {
+    "id": 235,
+    "createdAt": "2024-11-07T14:24:00.840326+00:00",
+    "count": 100,
+    "date": "2024-11-07",
+    "duration": 3,
+    "name": "Международная научно-практическая конференция \n«Актуальные и перспективные научные исследования»\n",
+    "rooms": [
+      {
+        "type": "Стандартный",
+        "name": "Стандартный",
+        "quantity": 50,
+        "nights": 50,
+        "cost": 975000
+      },
+      {
+        "type": "Люкс",
+        "name": "Люкс",
+        "quantity": 20,
+        "nights": 3,
+        "cost": 600000
+      },
+      {
+        "type": "Делюкс",
+        "name": "Делюкс",
+        "quantity": 10,
+        "nights": 3,
+        "cost": 300000
+      }
+    ],
+    "halls": [
+      {
+        "name": "Банкетный зал Тоскана",
+        "cost": 180000,
+        "seating": "Театр",
+        "days": 2
+      },
+      {
+        "name": "Конгресс-холл Московский",
+        "cost": 216000,
+        "seating": "Театр",
+        "days": 1
+      },
+      {
+        "name": "Конференц-зал Санкт-Петербург",
+        "cost": 150000,
+        "seating": "Класс",
+        "days": 2
+      },
+      {
+        "name": "Зал переговоров",
+        "cost": 100000,
+        "seating": "Круглый стол",
+        "days": 1
+      }
+    ],
+    "food": [
+      {
+        "packageName": "Банкет №1",
+        "quantity": 1,
+        "persons": 100,
+        "cost": 360000
+      },
+      {
+        "packageName": "Кофе-брейк \"Приветственный\"",
+        "quantity": 1,
+        "persons": 100,
+        "cost": 36000
+      },
+      {
+        "packageName": "Обед \"Бизнес\"",
+        "quantity": 2,
+        "persons": 100,
+        "cost": 400000
+      },
+      {
+        "packageName": "Ужин \"Гала\"",
+        "quantity": 1,
+        "persons": 100,
+        "cost": 500000
+      }
+    ],
+    "hotel": {
+      "name": "Mercure Москва Павелецкая",
       "email": "vavilovvladislavvv@gmail.com",
       "phone": "+7 (160) 232-86-71",
+      "owner": {
+        "created_at": "2024-08-12T10:25:30.976908+00:00",
+        "uid": "b8cca382-1724-4661-a7c5-7a267a970f6a",
+        "name": "Марцинюк Артём Артемович",
+        "role": "HOTEL",
+        "email": "vavilovvladislavvv@gmail.com",
+        "phone": "+7 (160) 232-86-71"
+      },
+      "juridicalInfo": {
+        "name": "ООО \"Красноармеец\"",
+        "address": "Адрес",
+        "lead": "Руководитель",
+        "KPP": "321213",
+        "INN": "231231",
+        "OGRN": "321213",
+        "OKPO": "31221",
+        "bank_name": "Банк",
+        "bank_korr": "31221",
+        "bank_RC": "2111",
+        "bank_BIC": "321213",
+        "bank_INN": "3212132",
+        "bank_KPP": "424214"
+      }
+    },
+    "roomsTotalCost": 1875000,
+    "foodTotalCost": 1296000,
+    "hallsTotalCost": 646000,
+    "totalCost": 3817000,
+    "owner": {
+      "name": "Иван Васильевич Организатор",
+      "email": "laland@ya.ru",
+      "phone": "+7 (999) 111-22-33",
+      "network": "ИП Организатор",
+      "jobTitle": "Император"
     },
     "juridicalInfo": {
-      "name": "ООО \"Красноармеец\"",
-      "address": "Адрес",
-      "lead": "Руководитель",
-      "KPP": "321213",
-      "INN": "231231",
-      "OGRN": "321213",
-      "OKPO": "31221",
-      "bank_name": "Банк",
-      "bank_korr": "31221",
-      "bank_RC": "2111",
-      "bank_BIC": "321213",
-      "bank_INN": "3212132",
-      "bank_KPP": "424214"
+      "name": "ИП Организатор",
+      "address": "Бобруйск, ул. Темная, д. 13",
+      "lead": "Руководит Кот",
+      "KPP": "5401001",
+      "INN": "123456789012",
+      "OGRN": "123456789",
+      "OKPO": "1234567890",
+      "bank_name": "ПАО \"Сбербанк\"",
+      "bank_korr": "12345678901234567890",
+      "bank_RC": "12345646548979879879",
+      "bank_BIC": "044555455",
+      "bank_INN": "4564654654656",
+      "bank_KPP": "5401001"
     }
-  },
-  "roomsTotalCost": 3500,
-  "foodTotalCost": 3500,
-  "hallsTotalCost": 5600,
-  "totalCost": 101100
+  }
 }

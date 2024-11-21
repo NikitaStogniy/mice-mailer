@@ -266,13 +266,21 @@ export class AppService {
 
   private async sendEmailsToClient(result: IResult) {
     for(const request of result.requests) {
-      await this.sendEmailToClient(request, result.owner);
+      await this.sendEmailToClient(request, result);
     }
   }
 
-  private async sendEmailToClient(request: IRequest, owner: User) {
+  private async sendEmailToClient(request: IRequest, result: IResult) {
     const clientTemplateContext = {
-      request,
+      request: {
+        ...request,
+        owner: {
+          ...result.owner,
+        },
+        juridicalInfo: {
+          ...result.juridicalInfo,
+        },
+      },
     };
     const clientHtmlForPdf = await this.handlebarsService.renderTemplate(
       'client',
@@ -282,11 +290,11 @@ export class AppService {
       await this.pdfService.generatePdf(clientHtmlForPdf),
     );
 
-    const clientPdfSubject = `Ваш запрос в отель ${clientTemplateContext.request.hotel.name} от ${formatDate(clientTemplateContext.request.createdAt)}`;
+    const clientPdfSubject = `КП №${clientTemplateContext.request.id} от ${formatDate(clientTemplateContext.request.createdAt)}, ${clientTemplateContext.request.hotel.name}`;
 
     this.mailerService
       .sendMail({
-        to: owner.email,
+        to: result.owner.email,
         from: process.env.EMAIL_ID,
         subject: clientPdfSubject,
         template: 'client',
@@ -344,7 +352,7 @@ export class AppService {
       await this.pdfService.generatePdf(hotelHtmlForPdf),
     );
 
-    const hotelPdfSubject = `Запрос от ${hotelTemplateContext.request.juridicalInfo.name} от ${formatDate(hotelTemplateContext.request.createdAt)}`;
+    const hotelPdfSubject = `КП №${hotelTemplateContext.request.id} от ${formatDate(hotelTemplateContext.request.createdAt)}, ${hotelTemplateContext.request.juridicalInfo.name}`;
 
     this.mailerService
       .sendMail({
