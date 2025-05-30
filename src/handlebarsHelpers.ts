@@ -103,6 +103,12 @@ Handlebars.registerHelper('displayBankAccountDetails', (juridicalInfo: Juridical
   return new Handlebars.SafeString(resultParts.join(', '));
 });
 
+Handlebars.registerHelper('or', function (...args) {
+  // Удаляем последний элемент, который является объектом options
+  const values = args.slice(0, -1);
+  return values.some(value => !!value);
+});
+
 function noWrap(content: string): string {
   return `<span style="white-space: nowrap">${content}</span>`;
 }

@@ -62,7 +62,7 @@ export class AppService {
     const { data, error } = await supabase
       .from('request_wrapper')
       .select('*')
-      .eq('id', id);
+      .eq('id', parseInt(id, 10));
 
     if (error) {
       console.log(error);
@@ -133,7 +133,7 @@ export class AppService {
     const { data, error } = await supabase
       .from('users')
       .select('*')
-      .eq('uid', uids)
+      .in('uid', uids)
       .single();
 
     if (error) {

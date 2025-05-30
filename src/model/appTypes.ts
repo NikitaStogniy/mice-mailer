@@ -33,6 +33,7 @@ export interface IHotel {
   email: string;
   phone: string;
   owner: User;
+  address: string;
   juridicalInfo: JuridicalInfo;
 }
 
