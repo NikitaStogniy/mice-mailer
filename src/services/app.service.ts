@@ -352,7 +352,7 @@ export class AppService {
       await this.pdfService.generatePdf(hotelHtmlForPdf),
     );
 
-    const hotelPdfSubject = `КП №${hotelTemplateContext.request.id} от ${formatDate(hotelTemplateContext.request.createdAt)}, ${hotelTemplateContext.request.juridicalInfo.name}`;
+    const hotelPdfSubject = `Запрос №${hotelTemplateContext.request.id} на ${formatDate(hotelTemplateContext.request.date)} для ${hotelTemplateContext.request.hotel.name}`;
 
     this.mailerService
       .sendMail({
