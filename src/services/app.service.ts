@@ -284,7 +284,10 @@ export class AppService {
     };
     const clientHtmlForPdf = await this.handlebarsService.renderTemplate(
       'client',
-      clientTemplateContext,
+      {
+        ...clientTemplateContext,
+        isPdf: true,
+      },
     );
     const clientPdfFileBuffer = Buffer.from(
       await this.pdfService.generatePdf(clientHtmlForPdf),
@@ -346,7 +349,10 @@ export class AppService {
 
     const hotelHtmlForPdf = await this.handlebarsService.renderTemplate(
       'hotel',
-      hotelTemplateContext,
+      {
+        ...hotelTemplateContext,
+        isPdf: true,
+      },
     );
     const hotelPdfFileBuffer = Buffer.from(
       await this.pdfService.generatePdf(hotelHtmlForPdf),

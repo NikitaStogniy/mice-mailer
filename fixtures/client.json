@@ -83,6 +83,7 @@
     ],
     "hotel": {
       "name": "Mercure Москва Павелецкая",
+      "address": "Москва, ул. Павелецкая, д. 1",
       "email": "vavilovvladislavvv@gmail.com",
       "phone": "+7 (160) 232-86-71",
       "owner": {
@@ -95,7 +96,7 @@
       },
       "juridicalInfo": {
         "name": "ООО \"Красноармеец\"",
-        "address": "Адрес",
+        "address": "Бобруйск, ул. Темная, д. 13",
         "lead": "Руководитель",
         "KPP": "321213",
         "INN": "231231",

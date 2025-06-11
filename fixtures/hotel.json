@@ -46,6 +46,7 @@
     ],
     "hotel": {
       "name": "Mercure Москва Павелецкая",
+      "address": "Москва, ул. Павелецкая, д. 1",
       "email": "vavilovvladislavvv@gmail.com",
       "phone": "+7 (160) 232-86-71",
       "owner": {

@@ -75,7 +75,10 @@ export class DevController {
   @Header('Content-Type', 'application/pdf')
   @Header('Content-Disposition', 'attachment; filename=client.pdf')
   async getTestClientPdf() {
-    const htmlContent = await this.handlebarsService.renderTemplate('client', clientTemplateFixture);
+    const htmlContent = await this.handlebarsService.renderTemplate('client', {
+      ...clientTemplateFixture,
+      isPdf: true,
+    });
     const pdfBytes = await this.pdfService.generatePdf(htmlContent);
     return new StreamableFile(Buffer.from(pdfBytes));
   }
@@ -90,7 +93,10 @@ export class DevController {
   @Header('Content-Type', 'application/pdf')
   @Header('Content-Disposition', 'attachment; filename=hotel.pdf')
   async getTestHotelPdf() {
-    const htmlContent = await this.handlebarsService.renderTemplate('hotel', hotelTemplateFixture);
+    const htmlContent = await this.handlebarsService.renderTemplate('hotel', {
+      ...hotelTemplateFixture,
+      isPdf: true,
+    });
     const pdfBytes = await this.pdfService.generatePdf(htmlContent);
     return new StreamableFile(Buffer.from(pdfBytes));
   }
