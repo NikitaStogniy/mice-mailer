@@ -44,7 +44,7 @@
             {{#unless isPdf}}
             <table style="width: 100%;">
               <tr>
-                <td style="padding: 12px 10px 20px; font-size: 14px; text-align: left; font-weight: 700;">
+                <td style="padding: 12px 0px 20px; font-size: 14px; text-align: left; font-weight: 700;">
                   Здравствуйте!<br/><br/>
                   Спасибо за использование сервиса Micebooking.<br/><br/>
                   Ознакомьтесь, пожалуйста, с коммерческим предложением от {{ request.hotel.name }}, {{ request.hotel.address }}. Менеджер отеля скоро свяжется с Вами для подтверждения.<br/><br/>
@@ -70,8 +70,8 @@
                 </td>
               </tr>
               <tr>
-                <td style="font-size: 12px; text-align: right; width: 50%;">
-                  <div style="width: 65%; float: right; text-align: left">
+                <td style="font-size: 12px; text-align: left">
+                  <div style="float: left; text-align: left">
                     {{ request.name }}
                   </div>
                 </td>
@@ -115,7 +115,6 @@
               </tr>
               <tr>
                 <td style="font-size: 12px; padding-left: 0; text-align: left;">
-                  {{ request.hotel.owner.name }},
                   {{ request.hotel.owner.email }},
                   {{ request.hotel.owner.phone }}
                 </td>
@@ -132,14 +131,14 @@
                   <td style="padding-left: 15px; width: 225px; border-top-left-radius: 10px">Название зала</td>
                   <td style="width: 90px">Рассадка</td>
                   <td style="width: 104px">Количество дней</td>
-                  <td style="border-top-right-radius: 10px; text-align: center;">Стоимость</td>
+                  <td style="border-top-right-radius: 10px; text-align: left;">Стоимость</td>
                 </tr>
                 {{#each request.halls as |hall index|}}
                   <tr style="font-size: 11px; background-color: {{tableRowBackgroundColor index}}; line-height: 20px">
                     <td style="padding-left: 15px;">{{hall.name}}</td>
                     <td>{{hall.seating}}</td>
-                    <td style="text-align: center">{{pluralizeRussian hall.days 'день' 'дня' 'дней'}}</td>
-                    <td style="text-align: right; padding-right: 15px">{{formatNumber hall.cost}} руб.</td>
+                    <td style="text-align: left">{{pluralizeRussian hall.days 'день' 'дня' 'дней'}}</td>
+                    <td style="text-align: left; padding-left: 15px">{{formatNumber hall.cost}} руб.</td>
                   </tr>
                 {{/each}}
                 <tr style="font-size: 11px; line-height: 20px">
@@ -149,7 +148,7 @@
                     style="text-align: center; background-color: #2431A5; color: #fff; font-weight: 700; border-bottom-left-radius: 10px">
                     Итого:
                   </td>
-                  <td style="text-align: right; font-weight: 700; padding-right: 15px">
+                  <td style="text-align: center; font-weight: 700; padding-left: 15px">
                     {{formatNumber request.hallsTotalCost}} руб.
                   </td>
                 </tr>
@@ -166,14 +165,14 @@
                   <td style="padding-left: 15px; width: 203px; border-top-left-radius: 10px">Название пакета</td>
                   <td style="width: 107px">Количество, шт</td>
                   <td style="width: 115px">Количество персон</td>
-                  <td style="border-top-right-radius: 10px; text-align: center;">Стоимость</td>
+                  <td style="border-top-right-radius: 10px; text-align: left;">Стоимость</td>
                 </tr>
                 {{#each request.food as |foodItem index|}}
                   <tr style="font-size: 11px; background-color: {{tableRowBackgroundColor index}}; line-height: 20px">
                     <td style="padding-left: 15px;">{{foodItem.packageName}}</td>
-                    <td style="text-align: center">{{foodItem.quantity}} шт</td>
-                    <td style="text-align: center">{{pluralizeRussian foodItem.persons 'персона' 'персоны' 'персон'}}</td>
-                    <td style="text-align: right; padding-right: 15px">{{formatNumber foodItem.cost}} руб.</td>
+                    <td style="text-align: left">{{foodItem.quantity}} шт</td>
+                    <td style="text-align: left">{{pluralizeRussian foodItem.persons 'персона' 'персоны' 'персон'}}</td>
+                    <td style="text-align: left; padding-left: 15px">{{formatNumber foodItem.cost}} руб.</td>
                   </tr>
                 {{/each}}
                 <tr style="font-size: 11px; line-height: 20px">
@@ -183,7 +182,7 @@
                     style="text-align: center; background-color: #2431A5; color: #fff; font-weight: 700; border-bottom-left-radius: 10px">
                     Итого:
                   </td>
-                  <td style="text-align: right; font-weight: 700; padding-right: 15px">
+                  <td style="text-align: left; font-weight: 700; padding-left: 15px">
                     {{formatNumber request.foodTotalCost}} руб.
                   </td>
                 </tr>
@@ -200,14 +199,14 @@
                   <td style="padding-left: 15px; width: 203px; border-top-left-radius: 10px">Название номера</td>
                   <td style="width: 107px">Количество</td>
                   <td style="width: 115px">Количество ночей</td>
-                  <td style="border-top-right-radius: 10px; text-align: center;">Стоимость</td>
+                  <td style="border-top-right-radius: 10px; text-align: left;">Стоимость</td>
                 </tr>
                 {{#each request.rooms as |room index|}}
                   <tr style="font-size: 11px; background-color: {{tableRowBackgroundColor index}}; line-height: 20px">
                     <td style="padding-left: 15px;">{{room.name}}</td>
-                    <td style="text-align: center">{{room.quantity}} шт</td>
-                    <td style="text-align: center">{{pluralizeRussian room.nights 'ночь' 'ночи' 'ночей'}} </td>
-                    <td style="text-align: right; padding-right: 15px">{{formatNumber room.cost}} руб.</td>
+                    <td style="text-align: left">{{room.quantity}} шт</td>
+                    <td style="text-align: left">{{pluralizeRussian room.nights 'ночь' 'ночи' 'ночей'}} </td>
+                    <td style="text-align: left; padding-left: 15px">{{formatNumber room.cost}} руб.</td>
                   </tr>
                 {{/each}}
                 <tr style="font-size: 11px; line-height: 20px">
@@ -217,7 +216,7 @@
                     style="text-align: center; background-color: #2431A5; color: #fff; font-weight: 700; border-bottom-left-radius: 10px">
                     Итого:
                   </td>
-                  <td style="text-align: right; font-weight: 700; padding-right: 15px">
+                  <td style="text-align: left; font-weight: 700; padding-left: 15px">
                     {{formatNumber request.roomsTotalCost}} руб.
                   </td>
                 </tr>
@@ -226,14 +225,14 @@
 
             <table style="margin: 37px 0 0; width: 100%;">
               <tr style="font-size: 14px;">
-                <td style="text-align: right; width: 400px;">Общий итог:</td>
-                <td style="text-align: right; font-weight: 700; padding-right: 15px;">{{formatNumber request.totalCost}} руб.</td>
+                <td style="text-align: left; width: 400px;">Общий итог:</td>
+                <td style="text-align: left; font-weight: 700; padding-left: 15px;">{{formatNumber request.totalCost}} руб.</td>
               </tr>
             </table>
 
             <table style="width: 100%;">
               <tr>
-                <td style="padding: 12px 10px 0; font-size: 14px; text-align: left; font-weight: 700;">
+                <td style="padding: 12px 0px 0; font-size: 14px; text-align: left; font-weight: 700;">
                   {{#if isPdf}}
                   Данное предложение носит ознакомительный характер.<br/>
                   Необходимо уточнить доступность залов и номеров у менеджера.<br/>
