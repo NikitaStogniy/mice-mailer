@@ -86,16 +86,20 @@
                   {{ formatDate request.date }}, {{pluralizeRussian request.duration 'день' 'дня' 'дней'}}, {{pluralizeRussian request.count 'участников' 'участников' 'участников'}}
                 </td>
               </tr>
+              {{#hasCustomerInfo request}}
               <tr>
                 <td>
                   <h2 style="font-size: 14px; font-weight: 700; margin: 5px 0 0;">Заказчик:</h2>
                 </td>
               </tr>
+              {{#if request.juridicalInfo.name}}
               <tr>
                 <td style="font-size: 12px;">
                   {{ request.juridicalInfo.name }} {{ request.juridicalInfo.INN }}
                 </td>
               </tr>
+              {{/if}}
+              {{#if request.owner.name}}
               <tr>
                 <td style="font-size: 12px;">
                   {{ request.owner.name }},
@@ -103,22 +107,30 @@
                   {{ request.owner.phone }}
                 </td>
               </tr>
+              {{/if}}
+              {{/hasCustomerInfo}}
+              {{#hasHotelInfo request}}
               <tr>
                 <td>
                   <h2 style="font-size: 14px; font-weight: 700; margin: 5px 0 0;">Площадка:</h2>
                 </td>
               </tr>
+              {{#if request.hotel.name}}
               <tr>
                 <td style="font-size: 12px; padding-left: 0; text-align: left;">
                   {{ request.hotel.name }}, {{ request.hotel.address }}
                 </td>
               </tr>
+              {{/if}}
+              {{#if request.hotel.owner.email}}
               <tr>
                 <td style="font-size: 12px; padding-left: 0; text-align: left;">
                   {{ request.hotel.owner.email }},
                   {{ request.hotel.owner.phone }}
                 </td>
               </tr>
+              {{/if}}
+              {{/hasHotelInfo}}
             </table>
 
             {{#if request.halls}}
