@@ -81,22 +81,28 @@
                   {{ formatDate request.date }}, {{pluralizeRussian request.duration 'день' 'дня' 'дней'}}, {{pluralizeRussian request.count 'участников' 'участников' 'участников'}}
                 </td>
               </tr>
+              {{#hasCustomerInfo request}}
               <tr>
                 <td>
                   <h2 style="font-size: 14px; font-weight: 700; margin: 5px 0 0;">Заказчик:</h2>
                 </td>
               </tr>
+              {{#if request.juridicalInfo.name}}
               <tr>
                 <td style="font-size: 12px;">
                   {{ request.juridicalInfo.name }}
                 </td>
               </tr>
+              {{/if}}
+              {{#if request.juridicalInfo.address}}
               <tr>
                 <td style="font-size: 12px; padding: 5px 0 0 0; line-height: 20px">
                   {{#if request.juridicalInfo.lead}}{{ request.juridicalInfo.lead }}<br />{{/if}}
                   {{ request.juridicalInfo.address }}<br />
                 </td>
               </tr>
+              {{/if}}
+              {{#if request.owner.name}}
               <tr>
                 <td>
                   <h2 style="font-size: 14px; font-weight: 700; margin: 5px 0 0;">Контактное лицо:</h2>
@@ -104,9 +110,11 @@
               </tr>
               <tr>
                 <td style="font-size: 12px; text-align: left">
-                  {{request.owner.name}}, {{request.owner.email}}, {{request.owner.phone}}
+                  {{request.owner.name}}{{#if request.owner.email}}, {{request.owner.email}}{{/if}}{{#if request.owner.phone}}, {{request.owner.phone}}{{/if}}
                 </td>
               </tr>
+              {{/if}}
+              {{/hasCustomerInfo}}
             </table>
 
             {{#if request.halls}}
