@@ -178,16 +178,64 @@ export class AppService {
       console.log('getHotel', hotelId, error);
     }
 
+    if (!hotel) {
+      console.log(`Hotel with id ${hotelId} not found`);
+      return <IHotel>{
+        name: '',
+        address: '',
+        email: '',
+        phone: '',
+        owner: {
+          name: '',
+          email: '',
+          phone: '',
+        },
+        juridicalInfo: {
+          name: '',
+          address: '',
+          lead: '',
+          KPP: '',
+          INN: '',
+          OGRN: '',
+          OKPO: '',
+          bank_name: '',
+          bank_korr: '',
+          bank_RC: '',
+          bank_BIC: '',
+          bank_INN: '',
+          bank_KPP: '',
+        },
+      };
+    }
+
     const owner = await this.getUserByUid(hotel.owner_id);
-    const juridicalInfo = await this.getJuridicalInfo(owner.id);
+    const juridicalInfo = await this.getJuridicalInfo(owner?.id);
 
     return <IHotel>{
       name: hotel.name || '',
       address: hotel.address || '',
-      email: owner.email || '',
-      phone: owner.phone || '',
-      owner,
-      juridicalInfo,
+      email: owner?.email || '',
+      phone: owner?.phone || '',
+      owner: owner || {
+        name: '',
+        email: '',
+        phone: '',
+      },
+      juridicalInfo: juridicalInfo || {
+        name: '',
+        address: '',
+        lead: '',
+        KPP: '',
+        INN: '',
+        OGRN: '',
+        OKPO: '',
+        bank_name: '',
+        bank_korr: '',
+        bank_RC: '',
+        bank_BIC: '',
+        bank_INN: '',
+        bank_KPP: '',
+      },
     };
   }
 
